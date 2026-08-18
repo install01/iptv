@@ -8,7 +8,7 @@ https://sogne-live.tving.com/o2/v1/019d66a3e87f153d786553381d0df/019d66a48657153
 #EXTINF:-1 tvg-name="홈앤쇼핑" group-title="홈쇼핑" tvg-logo="https://i.namu.wiki/i/BI0UACbJGapSRRYWfbLz2N-OL2wWnLdfmpCGSIBdcCuPX0XLOom60Co9Pi0EdjYF2635HNz3oHjvSKcUWvAlgw.svg" tvg-chno="4",홈앤쇼핑
 https://s30.qtcdn.co.kr/media/liveM3U8/idx/484074138/enc/1790577012/playlist.m3u8
 #EXTINF:-1 tvg-name="SBS" group-title="지상파/종편" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Seoul_Broadcasting_System_logo.svg/3840px-Seoul_Broadcasting_System_logo.svg.png?utm_source=ko.wikipedia.org&utm_campaign=index&utm_content=thumbnail" tvg-chno="5",SBS
-https://vod.tjb.co.kr/live/_definst_/tv/playlist.m3u8
+https://tvlive.sbs.co.kr/sbsch6/sbsch61.stream/playlist.m3u8?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3ODcwNTUzNjgsInBhdGgiOiIvc2JzY2g2MS5zdHJlYW0iLCJkdXJhdGlvbiI6LTEsInVubyI6IjE2YTQzNmViLTJlOTctNDQwMS05ZDY5LWE1Zjc1ZGEyMjZiMyIsImlhdCI6MTc4NzA0ODE2OH0.RwRfk0RaMq6v-IkbgKFjnCjyQCFzNexJAKSiUE7u44I
 #EXTINF:-1 tvg-name="GS샵" group-title="홈쇼핑" tvg-logo="https://i.namu.wiki/i/n0bY1e4r_UzGoRTt8oKOpr-cfpBWJy0rk4Q_Ll2a_jOzIvSg845i8m7Or0IRKz2fPkrP5tb4sY_NQJ2iwgEUAw.svg" tvg-chno="6",GS샵
 https://gstv-gsshop.gsshop.com/gsshop_hd/_definst_/gsshop_hd.stream/playlist.m3u8
 #EXTINF:-1 tvg-name="KBS2" group-title="지상파/종편" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/KBS_2_logo.svg/3840px-KBS_2_logo.svg.png?utm_source=ko.wikipedia.org&utm_campaign=index&utm_content=thumbnail" tvg-chno="7",KBS2
@@ -20,7 +20,7 @@ https://1tv.gscdn.kbs.co.kr/1tv_3.m3u8?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIj
 #EXTINF:-1 tvg-name="롯데홈쇼핑" group-title="홈쇼핑" tvg-logo="https://i.namu.wiki/i/BI0UACbJGapSRRYWfbLz2N-OL2wWnLdfmpCGSIBdcCuPX0XLOom60Co9Pi0EdjYF2635HNz3oHjvSKcUWvAlgw.svg" tvg-chno="10",롯데홈쇼핑
 https://tistory1.daumcdn.net/tistory/2864460/skin/images/CATV_515_8593A1AE.m3u8
 #EXTINF:-1 tvg-name="MBC" group-title="지상파/종편" tvg-logo="https://www.mpmbc.co.kr/main/images/contents/mp/ci_1.png" tvg-chno="11",MBC
-https://sogne-live.tving.com/o2/v1/019b07fc4c12153d7865286682f0d3/019b07fca9701eb80e79295b4c7664/playlist.m3u8?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3ODcwMzQ2NTgsInJlcyI6Ii9vMi8qIiwic2NjIjoiQ1NTRDAxMDAiLCJvc2MiOiJDU09EMDkwMCIsInZ4ciI6NzIwLCJkcm0iOmZhbHNlLCJ3bWkiOiIiLCJkbXQiOiJzdCIsIm1kbCI6Im1hYy1vc19maXJlZm94XzE1My4wIiwiaXNwIjoiTEcgVXBsdXMiLCJzdnQiOiJsaXZlIn0.pAc8qxuLDJpNYmcJsBqdz9ubpOKZtuXZkGpEI0m9iHo&sgn.tokver=2&vc=1&ads.program_code=P000655839&ads.channel_code=C00711&ads.profile_no=297036059&ads.targeting=0&ads.asn=17858&ads.floor_price=7900&ads.is_kids_content=false&ads.tier_group=non_tier&ads.grade_code=CPTG0100&pf=firefox_2.19.6_hlsjs&sgn.xr=1964&sgn.vc=1%2C2%2C3&sgn.osn=mac%20os&sgn.osv=10.15&sgn.dvm=PC&sgn.brn=Firefox&sgn.brv=153.0&sgn.pln=Hls.js&sgn.plv=2.19.6&ads.product_id=www.tving.com
+https://live.imnews.imbc.com/imnews/_definst_/live2.stream/playlist.m3u8?e=1787057943&h=b9f9e917260b84a1d7f29808d3fe8810
 #EXTINF:-1 tvg-name="현대홈쇼핑" group-title="홈쇼핑" tvg-logo="https://i.namu.wiki/i/z7xbnMFKGeOjYosUGJEmH1Gney_7OiSIjUcO3X2UQRbVVPpwDswE9UZa5Io1FyxgK6wl3hiP1L0gus5jjcGIhA.svg" tvg-chno="12",현대홈쇼핑
 https://livejj.hyundaihmall.com:8443/live/ngrp:hmall.stream_pc/playlist.m3u8
 #EXTINF:-1 tvg-name="NS홈쇼핑" group-title="홈쇼핑" tvg-logo="https://i.namu.wiki/i/6-UFCOG1e2E7-u01NJ0QPEJivllhuoQxLYNSHOSZB9t3XOLI1wQYZ4UdXUAln9MZy50jAlfjmcyPQI6FUVGlBA.svg" tvg-chno="13",NS홈쇼핑
