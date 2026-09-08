@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M3U 재생목록 편집기</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Segoe UI', sans-serif; background: #f5f7fa; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; font-size: 1.5rem; margin-bottom: 25px; }
+        
+        /* 파일 불러오기 섹션 스타일 */
+        .import-section { display: flex; align-items: center; justify-content: space-between; background: #f3e5f5; padding: 15px 20px; border-radius: 6px; margin-bottom: 20px; border: 1px dashed #ce93d8; }
+        .import-info h3 { margin: 0 0 5px 0; font-size: 1.1em; color: #4a148c; }
+        .import-info p { margin: 0; font-size: 0.85em; color: #7b1fa2; }
+        .import-btn { background-color: #9c27b0; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-size: 1em; font-weight: bold; transition: background 0.3s; }
+        .import-btn:hover { background-color: #7b1fa2; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 5px; }
+        .form-group.full-width { grid-column: span 2; }
+        
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; color: #555; }
+        
+        input[type="text"], input[type="number"], select { 
+            width: 100%; 
+            height: 42px;
+            padding: 0 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            font-size: 0.95em;
+            font-family: inherit;
+            background-color: #fff;
+            outline: none; 
+            transition: border-color 0.3s; 
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color: #3498db; }
+        
+        button { background-color: #3498db; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 0.95em; transition: background 0.3s; }
+        button:hover { background-color: #2980b9; }
+        
+        .add-btn { width: 100%; font-weight: bold; margin-top: 15px; padding: 12px; font-size: 1.1em; }
+        
+        hr { border: 0; height: 1px; background: #eee; margin: 30px 0; }
+        
+        /* 채널 목록 헤더 및 정렬 버튼 스타일 추가 */
+        .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .list-header h2 { margin: 0; color: #2c3e50; }
+        .sort-btn { background-color: #8e44ad; font-weight: bold; padding: 8px 15px; }
+        .sort-btn:hover { background-color: #732d91; }
+
+        .channel-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .channel-item { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; padding: 12px; border: 1px solid #e9ecef; border-radius: 6px; }
+        .channel-logo { width: 50px; height: 50px; object-fit: contain; background: #fff; border: 1px solid #ddd; border-radius: 4px; flex-shrink: 0; }
+        .channel-info { flex-grow: 1; margin: 0 15px; overflow: hidden; }
+        .channel-info h4 { margin: 0 0 5px 0; color: #2c3e50; font-size: 1.05em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .channel-info p { margin: 0; font-size: 0.85em; color: #7f8c8d; line-height: 1.4; word-break: break-all; }
+        
+        .channel-controls { display: flex; gap: 5px; flex-shrink: 0; }
+        .channel-controls button { padding: 6px 10px; font-size: 0.85em; background-color: #7f8c8d; }
+        .channel-controls button:hover { background-color: #636e72; }
+        .channel-controls .edit-btn { background-color: #f39c12; }
+        .channel-controls .edit-btn:hover { background-color: #d68910; }
+        .channel-controls .delete-btn { background-color: #e74c3c; }
+        .channel-controls .delete-btn:hover { background-color: #c0392b; }
+        
+        .edit-card { background: #eef6fc; border: 1px solid #b3d7ff; padding: 15px; border-radius: 6px; }
+        .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .edit-card label { font-size: 0.8em; margin-bottom: 3px; }
+        .edit-card input, .edit-card select { height: 36px; font-size: 0.9em; }
+        .edit-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+        .save-btn { background-color: #27ae60; }
+        .save-btn:hover { background-color: #219150; }
+        .cancel-btn { background-color: #95a5a6; }
+        .cancel-btn:hover { background-color: #7f8c8d; }
+        
+        .export-section { display: flex; gap: 10px; margin-top: 20px; background: #eef2f5; padding: 15px; border-radius: 6px; align-items: flex-end;}
+        .export-section .form-group { margin-bottom: 0; flex-grow: 1; }
+        .export-btn { background-color: #27ae60; font-weight: bold; height: 42px; padding: 0 20px; white-space: nowrap; }
+        .export-btn:hover { background-color: #2ecc71; }
+        .empty-msg { text-align: center; color: #95a5a6; padding: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📺 M3U 재생목록 편집기</h1>
+
+    <!-- 파일 불러오기 섹션 -->
+    <div class="import-section">
+        <div class="import-info">
+            <h3>📂 기존 M3U 파일 불러오기</h3>
+            <p>보유하고 있는 .m3u 파일을 불러와 편집을 이어갈 수 있습니다.</p>
+        </div>
+        <div>
+            <input type="file" id="fileInput" accept=".m3u" style="display: none;" onchange="importM3U(event)">
+            <button class="import-btn" onclick="document.getElementById('fileInput').click()">파일 선택</button>
+        </div>
+    </div>
+    
+    <!-- 채널 입력 폼 -->
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="chName">채널 이름 (필수)</label>
+            <input type="text" id="chName" placeholder="예: KBS1">
+        </div>
+        <div class="form-group">
+            <label for="chNumber">채널 번호 (선택)</label>
+            <input type="number" id="chNumber" placeholder="예: 9">
+        </div>
+        <div class="form-group">
+            <label for="chCategory">카테고리</label>
+            <select id="chCategory">
+                <option value="지상파/종편">지상파/종편</option>
+                <option value="예능">예능</option>
+                <option value="스포츠/레저">스포츠/레저</option>
+                <option value="교양/다큐">교양/다큐</option>
+                <option value="어린이/교육">어린이/교육</option>
+                <option value="영화/시리즈">영화/시리즈</option>
+                <option value="드라마">드라마</option>
+                <option value="뉴스/경제">뉴스/경제</option>
+                <option value="공공/종교">공공/종교</option>
+                <option value="음악">음악</option>
+                <option value="홈쇼핑">홈쇼핑</option>
+                <option value="기타">기타</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="chLogo">방송사 로고 URL (선택)</label>
+            <input type="text" id="chLogo" placeholder="http://...logo.png">
+        </div>
+        <div class="form-group full-width">
+            <label for="chUrl">재생 채널 URL (m3u8 등)</label>
+            <input type="text" id="chUrl" placeholder="재생 URL 입력">
+        </div>
+    </div>
+    <button class="add-btn" onclick="addChannel()">+ 새로운 채널 추가하기</button>
+
+    <hr>
+
+    <!-- 채널 목록 (제목 및 정렬 버튼) -->
+    <div class="list-header">
+        <h2>현재 등록된 채널 (<span id="chCount">0</span>)</h2>
+        <button class="sort-btn" onclick="sortChannelsByNumber()" title="채널 번호를 기준으로 오름차순 정렬합니다.">🔢 채널 번호순 정렬</button>
+    </div>
+    
+    <div class="channel-list" id="channelList">
+        <div class="empty-msg">추가된 채널이 없습니다. 위에서 파일을 불러오거나 새 채널을 추가해주세요.</div>
+    </div>
+
+    <!-- 내보내기 폼 -->
+    <div class="export-section">
+        <div class="form-group">
+            <label for="fileName">저장할 파일 이름</label>
+            <input type="text" id="fileName" value="playlist" placeholder="확장자 제외하고 입력">
+        </div>
+        <button class="export-btn" onclick="exportM3U()">💾 M3U 파일 다운로드</button>
+    </div>
+</div>
+
+<script>
+    let channels = [];
+    let editingIndex = -1;
+
+    const categories = [
+        "지상파/종편", "예능", "스포츠/레저", "교양/다큐", 
+        "어린이/교육", "영화/시리즈", "드라마", "뉴스/경제", 
+        "공공/종교", "음악", "홈쇼핑", "기타"
+    ];
+
+    const prefixToRemove = 'chrome-extension://eakdijdofmnclopcffkkgmndadhbjgka/player.html#';
+
+    function cleanUrl(url) {
+        let trimmed = url.trim();
+        if (trimmed.startsWith(prefixToRemove)) {
+            return trimmed.replace(prefixToRemove, '');
+        }
+        return trimmed;
+    }
+
+    function importM3U(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const content = e.target.result;
+            const lines = content.split('\n');
+            
+            let newChannels = [];
+            let currentChannel = null;
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                
+                if (line.startsWith('#EXTINF:')) {
+                    currentChannel = { name: '', number: '', category: '기타', logo: '', url: '' };
+                    
+                    const tvgNameMatch = line.match(/tvg-name="([^"]+)"/i);
+                    if (tvgNameMatch) currentChannel.name = tvgNameMatch[1];
+                    
+                    const groupTitleMatch = line.match(/group-title="([^"]+)"/i);
+                    if (groupTitleMatch) {
+                        const title = groupTitleMatch[1];
+                        if (categories.includes(title)) {
+                            currentChannel.category = title;
+                        } else {
+                            currentChannel.category = title; 
+                        }
+                    }
+                    
+                    const tvgLogoMatch = line.match(/tvg-logo="([^"]+)"/i);
+                    if (tvgLogoMatch) currentChannel.logo = tvgLogoMatch[1];
+                    
+                    const tvgChnoMatch = line.match(/tvg-chno="([^"]+)"/i);
+                    if (tvgChnoMatch) currentChannel.number = tvgChnoMatch[1];
+                    
+                    const commaIndex = line.lastIndexOf(',');
+                    const nameAfterComma = commaIndex !== -1 ? line.substring(commaIndex + 1).trim() : '';
+                    
+                    if (!currentChannel.name && nameAfterComma) {
+                        currentChannel.name = nameAfterComma;
+                    } else if (!currentChannel.name) {
+                        currentChannel.name = "알 수 없는 채널";
+                    }
+
+                } else if (line !== '' && !line.startsWith('#') && currentChannel) {
+                    currentChannel.url = cleanUrl(line);
+                    newChannels.push(currentChannel);
+                    currentChannel = null; 
+                }
+            }
+            
+            if (newChannels.length > 0) {
+                channels = channels.concat(newChannels);
+                renderList();
+                
+                const originalFileName = file.name.replace(/\.m3u$/i, '');
+                document.getElementById('fileName').value = originalFileName;
+                
+                alert(`${newChannels.length}개의 채널을 성공적으로 불러왔습니다.`);
+            } else {
+                alert('유효한 채널 정보를 찾을 수 없거나 파일 형식이 잘못되었습니다.');
+            }
+            
+            event.target.value = '';
+        };
+        reader.readAsText(file);
+    }
+
+    function addChannel() {
+        const nameInput = document.getElementById('chName');
+        const numberInput = document.getElementById('chNumber');
+        const categoryInput = document.getElementById('chCategory');
+        const logoInput = document.getElementById('chLogo');
+        const urlInput = document.getElementById('chUrl');
+
+        if (!nameInput.value.trim() || !urlInput.value.trim()) {
+            alert('채널 이름과 재생 URL은 필수입니다.');
+            return;
+        }
+
+        const newChannel = {
+            name: nameInput.value.trim(),
+            number: numberInput.value.trim(),
+            category: categoryInput.value,
+            logo: logoInput.value.trim(),
+            url: cleanUrl(urlInput.value)
+        };
+
+        channels.push(newChannel);
+        
+        nameInput.value = '';
+        numberInput.value = '';
+        logoInput.value = '';
+        urlInput.value = '';
+        
+        renderList();
+        nameInput.focus();
+    }
+
+    function startEdit(index) {
+        editingIndex = index;
+        renderList();
+    }
+
+    function cancelEdit() {
+        editingIndex = -1;
+        renderList();
+    }
+
+    function saveEdit(index) {
+        const name = document.getElementById(`edit-name-${index}`).value.trim();
+        const number = document.getElementById(`edit-number-${index}`).value.trim();
+        let category = document.getElementById(`edit-category-${index}`).value;
+        const logo = document.getElementById(`edit-logo-${index}`).value.trim();
+        const url = document.getElementById(`edit-url-${index}`).value.trim();
+
+        if (!name || !url) {
+            alert('채널 이름과 재생 URL은 필수입니다.');
+            return;
+        }
+
+        channels[index] = {
+            name: name,
+            number: number,
+            category: category,
+            logo: logo,
+            url: cleanUrl(url)
+        };
+
+        editingIndex = -1;
+        renderList();
+    }
+
+    function moveChannel(index, direction) {
+        if (editingIndex !== -1) editingIndex = -1;
+        if (direction === -1 && index > 0) {
+            [channels[index - 1], channels[index]] = [channels[index], channels[index - 1]];
+        } else if (direction === 1 && index < channels.length - 1) {
+            [channels[index + 1], channels[index]] = [channels[index], channels[index + 1]];
+        }
+        renderList();
+    }
+
+    // 채널 번호순 정렬 함수 추가
+    function sortChannelsByNumber() {
+        if (channels.length === 0) return;
+
+        channels.sort((a, b) => {
+            // 빈 값이거나 숫자가 아닌 경우 무한대로 처리하여 맨 뒤로 보냄
+            const numA = (a.number && !isNaN(a.number)) ? parseInt(a.number, 10) : Infinity;
+            const numB = (b.number && !isNaN(b.number)) ? parseInt(b.number, 10) : Infinity;
+            
+            // 번호가 같을 경우 이름을 기준으로 가나다순 추가 정렬
+            if (numA === numB) {
+                return a.name.localeCompare(b.name);
+            }
+            
+            return numA - numB;
+        });
+
+        // 진행 중인 편집 모드가 있다면 닫고 렌더링
+        editingIndex = -1;
+        renderList();
+    }
+
+    function deleteChannel(index) {
+        if (confirm(`'${channels[index].name}' 채널을 삭제하시겠습니까?`)) {
+            if (editingIndex === index) editingIndex = -1;
+            channels.splice(index, 1);
+            renderList();
+        }
+    }
+
+    function renderList() {
+        const listDiv = document.getElementById('channelList');
+        document.getElementById('chCount').innerText = channels.length;
+        
+        listDiv.innerHTML = '';
+
+        if (channels.length === 0) {
+            listDiv.innerHTML = '<div class="empty-msg">추가된 채널이 없습니다. 위에서 파일을 불러오거나 새 채널을 추가해주세요.</div>';
+            return;
+        }
+
+        channels.forEach((ch, index) => {
+            if (index === editingIndex) {
+                const editCard = document.createElement('div');
+                editCard.className = 'edit-card';
+
+                let categoryOptions = categories.map(cat => 
+                    `<option value="${cat}" ${cat === ch.category ? 'selected' : ''}>${cat}</option>`
+                ).join('');
+                
+                if (!categories.includes(ch.category)) {
+                    categoryOptions += `<option value="${ch.category}" selected>${ch.category} (사용자 지정)</option>`;
+                }
+
+                editCard.innerHTML = `
+                    <div class="edit-grid">
+                        <div>
+                            <label>채널 이름</label>
+                            <input type="text" id="edit-name-${index}" value="${ch.name}">
+                        </div>
+                        <div>
+                            <label>채널 번호</label>
+                            <input type="number" id="edit-number-${index}" value="${ch.number}">
+                        </div>
+                        <div>
+                            <label>카테고리</label>
+                            <select id="edit-category-${index}">
+                                ${categoryOptions}
+                            </select>
+                        </div>
+                        <div>
+                            <label>방송사 로고 URL</label>
+                            <input type="text" id="edit-logo-${index}" value="${ch.logo}">
+                        </div>
+                        <div style="grid-column: span 2;">
+                            <label>재생 채널 URL</label>
+                            <input type="text" id="edit-url-${index}" value="${ch.url}">
+                        </div>
+                    </div>
+                    <div class="edit-actions">
+                        <button class="save-btn" onclick="saveEdit(${index})">💾 저장</button>
+                        <button class="cancel-btn" onclick="cancelEdit()">취소</button>
+                    </div>
+                `;
+                listDiv.appendChild(editCard);
+            } else {
+                const item = document.createElement('div');
+                item.className = 'channel-item';
+                
+                const logoHtml = ch.logo 
+                    ? `<img src="${ch.logo}" class="channel-logo" alt="Logo" onerror="this.style.display='none'">` 
+                    : `<div class="channel-logo" style="display:flex; align-items:center; justify-content:center; color:#ccc; font-size:10px;">No Logo</div>`;
+
+                const chNoDisplay = ch.number ? `[CH. ${ch.number}] ` : '';
+
+                item.innerHTML = `
+                    ${logoHtml}
+                    <div class="channel-info">
+                        <h4>${chNoDisplay}${ch.name}</h4>
+                        <p><strong>카테고리:</strong> ${ch.category} | <strong>스트림:</strong> ${ch.url}</p>
+                    </div>
+                    <div class="channel-controls">
+                        <button onclick="moveChannel(${index}, -1)" title="위로" ${index === 0 ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''}>▲</button>
+                        <button onclick="moveChannel(${index}, 1)" title="아래로" ${index === channels.length - 1 ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''}>▼</button>
+                        <button class="edit-btn" onclick="startEdit(${index})" title="편집">✏️ 편집</button>
+                        <button class="delete-btn" onclick="deleteChannel(${index})" title="삭제">❌</button>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            }
+        });
+    }
+
+    function exportM3U() {
+        if (channels.length === 0) {
+            alert('내보낼 채널이 없습니다.');
+            return;
+        }
+
+        let m3uContent = '#EXTM3U\n';
+
+        channels.forEach(ch => {
+            let attributes = '';
+            if (ch.name) attributes += ` tvg-name="${ch.name}"`;
+            if (ch.category) attributes += ` group-title="${ch.category}"`;
+            if (ch.logo) attributes += ` tvg-logo="${ch.logo}"`;
+            if (ch.number) attributes += ` tvg-chno="${ch.number}"`;
+
+            attributes = attributes.trim();
+            
+            m3uContent += `#EXTINF:-1 ${attributes},${ch.name}\n`;
+            m3uContent += `${ch.url}\n`;
+        });
+
+        let fileName = document.getElementById('fileName').value.trim() || 'playlist';
+        if (!fileName.endsWith('.m3u')) {
+            fileName += '.m3u';
+        }
+
+        const blob = new Blob([m3uContent], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.style.display = 'none';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    }
+</script>
+
+</body>
+</html>
